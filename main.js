@@ -11,12 +11,13 @@ function getComputerChoice() {
     }
 }
 
-const computerChoice = getComputerChoice();
 
-console.log(computerChoice);
+function getUserChoice() {
 
 const playerChoice = prompt("Chose either Rock, Paper or Scissors!", "Rock");
 const playerChoiceLowerCase= playerChoice.toLowerCase();
+return playerChoiceLowerCase;
+}
 
 function playRound(computerChoice, playerChoice){
     if (computerChoice === playerChoice){
@@ -31,8 +32,48 @@ function playRound(computerChoice, playerChoice){
     else if (computerChoice === "scissors" && playerChoice === "paper"){
         return "You lose! Scissors beats Paper!"
     }
+    else if(playerChoice !== "rock" && playerChoice !== "paper" && playerChoice !== "scissors") {
+        return "Error! Type in a valid choice!"
+    }
+    
     else { return `You win! ${playerChoice} beats ${computerChoice}!`;
     }
 }
 
-console.log(playRound(computerChoice, playerChoiceLowerCase));
+function game() {
+    let win = 0;
+    let lose = 0;
+    let draw = 0;
+    for (i = 0; i < 5; i++){
+        
+        const computerChoice = getComputerChoice();
+        const playerChoice = getUserChoice();
+        const outcome = playRound(computerChoice, playerChoice);
+        if (outcome.slice(0, 9) === "You lose!"){
+            lose++;
+        }
+        else if (outcome.slice(0, 8) === "You win!"){
+            win++;
+        }
+        else if (outcome === "draw") {
+            draw++;
+        }
+        else if (outcome.slice(0, 6) === "Error!"){
+            i--;
+        }
+        
+        console.log(outcome);
+    }
+    console.log("wins:" + win + ", losses: " + lose );
+    if (win < lose) {
+        console.log("The final winner is the Computer.");
+    }
+    else if (win > lose) {
+        console.log("The final winner is you.")
+    }
+    else {
+        console.log("You drew.");
+    }
+}
+
+game();
