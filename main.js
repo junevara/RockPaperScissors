@@ -20,60 +20,107 @@ return playerChoiceLowerCase;
 }
 
 function playRound(computerChoice, playerChoice){
+    let arr = [];
+    arr[1] = computerChoice;
+    arr[2] = playerChoice;
     if (computerChoice === playerChoice){
-        return "draw";
+        arr[0]='draw';
+        
     }
     else if (computerChoice === "rock" && playerChoice === "scissors"){
-        return "You lose! Rock beats Scissors!";
+        arr[0]='lose';
     }
     else if (computerChoice === "paper" && playerChoice === "rock"){
-        return "You lose! Paper beats Rock!";
+        arr[0]='lose';
     }
     else if (computerChoice === "scissors" && playerChoice === "paper"){
-        return "You lose! Scissors beats Paper!"
-    }
-    else if(playerChoice !== "rock" && playerChoice !== "paper" && playerChoice !== "scissors") {
-        return "Error! Type in a valid choice!"
+        arr[0]='lose';
     }
     
-    else { return `You win! ${playerChoice} beats ${computerChoice}!`;
+    
+    else { 
+        arr[0]='win';
     }
+    //console.log(arr);
+    return arr;
+
 }
 
-function game() {
-    let win = 0;
-    let lose = 0;
-    let draw = 0;
-    for (i = 0; i < 5; i++){
-        
-        const computerChoice = getComputerChoice();
-        const playerChoice = getUserChoice();
-        const outcome = playRound(computerChoice, playerChoice);
-        if (outcome.slice(0, 9) === "You lose!"){
-            lose++;
-        }
-        else if (outcome.slice(0, 8) === "You win!"){
-            win++;
-        }
-        else if (outcome === "draw") {
-            draw++;
-        }
-        else if (outcome.slice(0, 6) === "Error!"){
-            i--;
-        }
-        
-        console.log(outcome);
+let outcome = [];
+let score = [0, 0, 0];
+
+
+const buttons = document.querySelectorAll('button');
+
+buttons.forEach(button => button.addEventListener('click', () => {
+    button.classList.add('clickAnimation');
+    outcome = playRound(getComputerChoice(), button.getAttribute('id'));
+    
+    
+    printPara();
+    
+    
+    if (outcome[0] === 'win'){
+        score[0]++;
     }
-    console.log("wins:" + win + ", losses: " + lose );
-    if (win < lose) {
-        console.log("The final winner is the Computer.");
+    else if (outcome[0] === 'lose'){
+        score[1]++;
     }
-    else if (win > lose) {
-        console.log("The final winner is you.")
+    else if (outcome[0] === 'draw'){
+        score[2]++;
+    
+    }
+
+    const scoreDisplay = document.querySelector('.scoreDisplay');
+    scoreDisplay.textContent = `${score[0]} win(s), ${score[1]} loss(es), ${score[2]} draw(s)`
+
+    const para2 = document.querySelector('.finalWinner');
+    if(score[0] === 5 || score[1] === 5){
+        
+        
+        if (score[0] === 5){
+            para2.textContent = 'You are the final winner';
+        }
+        else if (score[1] === 5){
+            para2.textContent = 'The computer is the final winner';
+        }
+        
+       
+
+        score = [0, 0, 0];
+
+
+
+    }
+
+    if((score[0] === 1 && score[1] === 0 && score[2] === 0)||(score[0] === 0 && score[1] === 1 && score[2] === 0)||(score[0] === 0 && score[1] === 0 && score[2] === 1)){
+        para2.textContent='';
+    }
+
+
+
+
+    
+}));
+
+function removeTransition(e){
+    if (e.propertyName !== 'transform') return;
+    this.classList.remove('clickAnimation');
+}
+
+buttons.forEach((button) => button.addEventListener('transitionend', removeTransition));
+
+
+function printPara(){
+    const para = document.querySelector('.result');
+
+    if (outcome[0] === 'lose'){
+        para.textContent = `You ${outcome[0]}, your ${outcome[2]} is beaten by computers ${outcome[1]}!`;
+    }
+    else if (outcome[0] === 'win'){
+        para.textContent = `You ${outcome[0]}, your ${outcome[2]} beats computers ${outcome[1]}!`;
     }
     else {
-        console.log("You drew.");
+        para.textContent = `You draw!`;
     }
 }
-
-game();
